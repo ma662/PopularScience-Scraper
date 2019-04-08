@@ -1,0 +1,26 @@
+{
+  "name": "popularscience-scraper",
+  "version": "1.0.0",
+  "description": "Web-scraping application that pulls article data from www.popsci.com.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ma662/PopularScience-Scraper.git"
+  },
+  "author": "Myles Alcala",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ma662/PopularScience-Scraper/issues"
+  },
+  "homepage": "https://github.com/ma662/PopularScience-Scraper#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.2",
+    "mongoose": "^5.5.0"
+  }
+}
