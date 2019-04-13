@@ -1,10 +1,27 @@
 $.getJSON("/articles", function(data) {
-  for (var i = 0; i< data.length; i++) {
-    $("#articles").append("<p data-id'" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-  }
+  console.log("I AM HERE");
+  console.log(data);
+
+    for (var i = 0; i< data.length; i++) {
+      $("#articles").append("<p data-id'" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+    }
 });
 
-$$(document).on("click", "p", function() {
+function thisFunc() {
+  $.ajax({
+    method: "GET",
+    url: "/scrape"
+  })
+  .then(function(data) {
+    console.log("here in code");
+    console.log(data);
+
+
+  });
+  
+}
+
+$(document).on("click", "p", function() {
   // Empty the notes from the note section
   $("#notes").empty();
   // Save the id from the p tag

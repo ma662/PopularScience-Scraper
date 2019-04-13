@@ -2,7 +2,7 @@
   "name": "popularscience-scraper",
   "version": "1.0.0",
   "description": "Web-scraping application that pulls article data from www.popsci.com.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
