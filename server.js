@@ -20,8 +20,9 @@ app.use(express.static("public"));
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
+let mdb = process.env.MONGODB_URI;
 
-mongoose.connect("mongodb://localhost/article_db", { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost/article_db", { useNewUrlParser: true } || mdb, { useNewUrlParser: true});
 
 app.get("/scrape", function(req, res) {
   console.log("Attempting server /scrape");
