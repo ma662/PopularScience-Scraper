@@ -30,8 +30,6 @@ app.get("/scrape", function(req, res) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
-    // var ve = $(".listingResults").find(".article-name").text();
-
     // prepare 
     var results = [];
     $(".listingResult").each(function() {
@@ -41,9 +39,9 @@ app.get("/scrape", function(req, res) {
       result.title = result.title.replace(/\n/gm,"");
       result.title = result.title.replace(/\\/g, "/");
 
-      // result.summary = $(this).find(".synopsis").text();
-      // result.summary = result.summary.replace(/\n/gm,"");
-      // result.summary = result.summary.replace(/\\/g, "/");
+      result.summary = $(this).find(".synopsis").text();
+      result.summary = result.summary.replace(/\n/gm,"");
+      result.summary = result.summary.replace(/\\/g, "/");
 
       result.link = $(this).children("a").attr("href");
 
@@ -60,7 +58,7 @@ app.get("/scrape", function(req, res) {
       console.log(results[i]);
       // if find this empty result, delete from array. It's empty because it's an ad div
       if (results[i].title === er.title 
-        // && results[i].summary === er.summary 
+        && results[i].summary === er.summary 
         && results[i].link === er.link) {
         console.log("Empty obj found");
         results.splice(i, 1);
@@ -73,22 +71,33 @@ app.get("/scrape", function(req, res) {
     for (var i=0; i<results.length; i++) {
       let result = results[i];
 
-      //Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(function(dbArticle) {
-          // View the added result in the console
-          console.log("added article: ", dbArticle);
-        })
-        .catch(function(err) {
-          // If an error occurred, log it
-          console.log(err);
-        });
+      db.Article.find( { title: result.title }, function(err, ret) {
+        if (err) { throw (err); }
+
+        console.log("Response from db: ", ret);
+
+        // if db returns something, do not add
+        if (ret.length !== 0) {
+          console.log("========", "Duplicate article detected. Not adding.", "========",);
+        }
+        // else, add to database
+        else {
+          db.Article.create(result)
+            .then(function(dbArticle) {
+              // View the added result in the console
+              console.log("========", "added article: ", dbArticle, "========",);
+            })
+            .catch(function(err) {
+              // If an error occurred, log it
+              console.log(err);
+            });
+        }
+      });
     }
     // Send a message to the client
     res.send("Scrape Complete");
   });
 });
-// });
 
 app.get("/", function(req, res) {
   res.render("index");
@@ -144,11 +153,7 @@ app.post("/articles/:id", function(req, res) {
       res.json(err);
     });
 });
-// routing
-// var routes = require("");
-// app.use(routes);
 
 app.listen(PORT, function() {
-
   console.log("Server listening on: http://localhost:" + PORT );
 });

@@ -1,20 +1,22 @@
 $.getJSON("/articles", function(data) {
   console.log(data);
 
-    for (var i = 0; i< data.length; i++) {
+    for (var i = 0; i< data.length; i++) { 
+      $("#articles").append(
+        "<p class='article-name' data-id='" + data[i]._id + "'>" 
+        + data[i].title
+        + "</p>"
 
-      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<hr />" + data[i].link + "</p>");
+        + "\n"
 
+        + "<p class='summary' data-id='" + data[i]._id + "'>" 
+        + data[i].summary
+        + "</p>"
 
-      // $("#articles").append(
-      //   "<p data-id'" + data[i]._id + "'>" 
+        + "<a href=" + data[i].link + ">(read article)</a>"
 
-      //   // + "<h4>"
-      //   + data[i].title //+ " <a href=" + data[i].link + ">" +  "(read article)" + "</a>"
-      //   // + "</h4>"
-      //   + data[i].link
-      //   // + data[i].summary
-      //   + "</p>");
+        + "<hr />"
+      );
     }
 });
 
@@ -28,6 +30,8 @@ $("#button").click(function () {
   .then(function(data) {
     console.log(data);
     alert(data);
+
+    location.reload();
   });
   
 });
@@ -45,11 +49,11 @@ $(document).on("click", "p", function() {
     })
     // With that done, add the note information to the page
     .then(function(data) {
-      console.log("DATA LOOKS LIKE THIS BOII: ", data);
+      console.log("data received: ", data);
       // The title of the article
-      $("#notes").append("<h2>" + data.title + "</h2>");
+      $("#notes").append("<h3>" + data.title + "</h3>");
       // An input to enter a new title
-      $("#notes").append("<input id='titleinput' name='title' >");
+      $("#notes").append("<input id='titleinput' name='title'>");
       // A textarea to add a new note body
       $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
       // A button to submit a new note, with the id of the article saved to it
