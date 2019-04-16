@@ -24,69 +24,71 @@ app.set("view engine", "handlebars");
 mongoose.connect("mongodb://localhost/article_db", { useNewUrlParser: true });
 
 app.get("/scrape", function(req, res) {
-  console.log("1 HERE");
+  console.log("Attempting server /scrape");
   // First, we grab the body of the html with axios
-  axios.get("https://www.popsci.com/tags/short-science-articles").then(function(response) {
+  axios.get("https://www.space.com/science-astronomy").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
-    // console.log(response.data);
-    // console.log($("sir-trevor-cl-u8dzw"));
+    // var ve = $(".listingResults").find(".article-name").text();
 
-    // $("sir-trevor-cl-u8dzw").each(function(i, element) {
+    // prepare 
+    var results = [];
+    $(".listingResult").each(function() {
+      let result = {};
 
-    $(" <li class='row-0'> ").each(function(i, element) {
-      console.log("2 THEN HERE");
-      console.log(element);
+      result.title = $(this).find(".article-name").text();
+      result.title = result.title.replace(/\n/gm,"");
+      result.title = result.title.replace(/\\/g, "/");
 
-      var result = {};
+      // result.summary = $(this).find(".synopsis").text();
+      // result.summary = result.summary.replace(/\n/gm,"");
+      // result.summary = result.summary.replace(/\\/g, "/");
 
-      console.log(this);
+      result.link = $(this).children("a").attr("href");
 
-      // result.title =  $(this)
-      // .children('');
-
-      // result.link = $(this)
-      // .children("a");
-
-      // console.log(result);
-      // res.send(result);
+      results.push(result);
     });
-    // );
-    
-    // .then(function(response) {
-    //   console.log(response);
-    // })
-    // $("").each(function(i, element) {
-    // // Now, we grab every h2 within an article tag, and do the followi
-    //   // Save an empty result object
-    //   var result = {};
 
-    //   // Add the text and href of every link, and save them as properties of the result object
-    //   result.title = $(this)
-    //     .children("a")
-    //     .text();
-    //   result.link = $(this)
-    //     .children("a")
-    //     .attr("href");
-        
-    //   console.log(result);
-    //   // Create a new Article using the `result` object built from scraping
-    //   // db.Article.create(result)
-    //   //   .then(function(dbArticle) {
-    //   //     // View the added result in the console
-    //   //     console.log(dbArticle);
-    //   //   })
-    //   //   .catch(function(err) {
-    //   //     // If an error occurred, log it
-    //   //     console.log(err);
-    //   //   });
-    // });
+    console.log(results);
 
-    // // Send a message to the client
-    // res.send("Scrape Complete");
+    // empty result object
+    var er = { title: '', summary: '', link: undefined };
+
+    for (var i=0; i<results.length; i++) {
+      console.log("===========");
+      console.log(results[i]);
+      // if find this empty result, delete from array. It's empty because it's an ad div
+      if (results[i].title === er.title 
+        // && results[i].summary === er.summary 
+        && results[i].link === er.link) {
+        console.log("Empty obj found");
+        results.splice(i, 1);
+      }
+    };
+
+    console.log("Logging new result", results);    
+
+    // for loop to inject results into db
+    for (var i=0; i<results.length; i++) {
+      let result = results[i];
+
+      //Create a new Article using the `result` object built from scraping
+      db.Article.create(result)
+        .then(function(dbArticle) {
+          // View the added result in the console
+          console.log("added article: ", dbArticle);
+        })
+        .catch(function(err) {
+          // If an error occurred, log it
+          console.log(err);
+        });
+    }
+    // Send a message to the client
+    res.send("Scrape Complete");
   });
 });
+// });
 
 app.get("/", function(req, res) {
   res.render("index");
@@ -97,6 +99,7 @@ app.get("/articles", function(req, res) {
   // Grab every document in the Articles collection
   db.Article.find({})
     .then(function(dbArticle) {
+      console.log("dbArticle looks like this: ", dbArticle);
       // If we were able to successfully find Articles, send them back to the client
       res.json(dbArticle);
     })

@@ -1,25 +1,36 @@
 $.getJSON("/articles", function(data) {
-  console.log("I AM HERE");
   console.log(data);
 
     for (var i = 0; i< data.length; i++) {
-      $("#articles").append("<p data-id'" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+
+      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<hr />" + data[i].link + "</p>");
+
+
+      // $("#articles").append(
+      //   "<p data-id'" + data[i]._id + "'>" 
+
+      //   // + "<h4>"
+      //   + data[i].title //+ " <a href=" + data[i].link + ">" +  "(read article)" + "</a>"
+      //   // + "</h4>"
+      //   + data[i].link
+      //   // + data[i].summary
+      //   + "</p>");
     }
 });
 
-function thisFunc() {
+$("#button").click(function () {
+  console.log("Attempting app scrape");
+
   $.ajax({
     method: "GET",
     url: "/scrape"
   })
   .then(function(data) {
-    console.log("here in code");
     console.log(data);
-
-
+    alert(data);
   });
   
-}
+});
 
 $(document).on("click", "p", function() {
   // Empty the notes from the note section
@@ -28,13 +39,13 @@ $(document).on("click", "p", function() {
   var thisId = $(this).attr("data-id");
 
   // Now make an ajax call for the Article
-  $.ajax({
-    method: "GET",
-    url: "/articles/" + thisId
-  })
+    $.ajax({
+      method: "GET",
+      url: "/articles/" + thisId
+    })
     // With that done, add the note information to the page
     .then(function(data) {
-      console.log(data);
+      console.log("DATA LOOKS LIKE THIS BOII: ", data);
       // The title of the article
       $("#notes").append("<h2>" + data.title + "</h2>");
       // An input to enter a new title
