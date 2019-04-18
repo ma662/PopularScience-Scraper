@@ -20,10 +20,14 @@ app.use(express.static("public"));
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-let mdb = process.env.MONGODB_URI;
+// let mdb = process.env.MONGODB_URI;
 
-// mongoose.connect("mongodb://localhost/article_db", { useNewUrlParser: true });
-mongoose.connect( mdb, { useNewUrlParser: true} );
+mongoose.connect("mongodb://localhost/article_db", { useNewUrlParser: true });
+// mongoose.connect( mdb, { useNewUrlParser: true} );
+
+app.get("/", function(req, res) {
+  res.render("index");
+});
 
 app.get("/scrape", function(req, res) {
   console.log("Attempting server /scrape");
@@ -49,9 +53,8 @@ app.get("/scrape", function(req, res) {
 
       results.push(result);
     });
-
     console.log(results);
-
+    
     // empty result object
     var er = { title: '', summary: '', link: undefined };
 
@@ -101,9 +104,6 @@ app.get("/scrape", function(req, res) {
   });
 });
 
-app.get("/", function(req, res) {
-  res.render("index");
-});
 
 // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
