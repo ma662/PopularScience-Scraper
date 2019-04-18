@@ -22,7 +22,10 @@ app.set("view engine", "handlebars");
 
 // let mdb = process.env.MONGODB_URI;
 
-mongoose.connect("mongodb://localhost/article_db", { useNewUrlParser: true });
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/article_db";
+mongoose.connect(MONGODB_URI);
+
+// mongoose.connect("", { useNewUrlParser: true });
 // mongoose.connect( mdb, { useNewUrlParser: true} );
 
 app.get("/", function(req, res) {
